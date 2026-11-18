@@ -6,7 +6,7 @@ name: Publish release
 on:
   push:
     branches: [main]
-    paths: ['releases/*/module.json']
+    paths: ['releases/*/module.json', '.github/workflows/publish-release.yml']
   workflow_dispatch:
 
 permissions:
