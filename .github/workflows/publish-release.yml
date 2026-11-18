@@ -1,0 +1,26 @@
+name: Publish release
+
+# Pushing a tag vX.Y.Z-drycuria.N publishes the files committed in releases/X.Y.Z-drycuria.N/
+# as a GitHub release. Foundry reads module.json from the latest release.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          DIR="releases/${TAG#v}"
+          test -f "$DIR/module.json" && test -f "$DIR/foundry-vtt-mcp.zip"
+          gh release create "$TAG" \
+            "$DIR/foundry-vtt-mcp.zip" "$DIR/module.json" "$DIR"/foundry-mcp-server-*.zip \
+            --title "$TAG" --notes-file "$DIR/NOTES.md" --latest
